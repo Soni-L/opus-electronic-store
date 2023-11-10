@@ -1,14 +1,18 @@
 import React from "react";
 import moment from "moment";
 import {
+  Box,
   Table,
   TableBody,
+  TableSortLabel,
+  Checkbox,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
   Paper,
 } from "@mui/material";
+import { visuallyHidden } from "@mui/utils";
 
 const status = {
   open: "Open",
@@ -22,7 +26,7 @@ const tableDataResponse = {
   items: [
     {
       id: 1,
-      name: "Dell XPS 13",
+      itemName: "Dell XPS 13",
       categoryName: "Computers",
       topReviewScore: "9",
       orderItems: [
@@ -53,28 +57,210 @@ const tableDataResponse = {
   ],
 };
 
-const TableToolBar = ({itemsSelected}) => {
-    return (
-      <div
-        style={{
-          width: "100%",
-          height: "30px",
-          backgroundColor: "#ECE7F9",
-          padding: "10px 0",
-          borderRadius: "10px",
-        }}
-      ></div>
-    );
+const firstOrderheadCells = [
+  {
+    id: "itemName",
+    numeric: false,
+    disablePadding: true,
+    label: "Item",
+  },
+  {
+    id: "categoryName",
+    numeric: false,
+    disablePadding: true,
+    label: "Category Name",
+  },
+  {
+    id: "topReviewScore",
+    numeric: false,
+    disablePadding: true,
+    label: "Top Review Score",
+  },
+];
+
+const rows = tableDataResponse.items.map((item) => {
+  return {
+    itemName: item.itemName,
+    categoryName: item.categoryName,
+    topReviewScore: item.topReviewScore,
+  };
+});
+
+function EnhancedTableHead(props) {
+  const {
+    onSelectAllClick,
+    order,
+    orderBy,
+    numSelected,
+    rowCount,
+    onRequestSort,
+  } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        <TableCell padding="checkbox">
+          <Checkbox
+            color="primary"
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{
+              "aria-label": "select all desserts",
+            }}
+          />
+        </TableCell>
+        {firstOrderheadCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={"left"}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : "asc"}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === "desc" ? "sorted descending" : "sorted ascending"}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
 }
 
+const TableToolBar = ({ numSelected }) => {
+  return (
+    <div
+      style={{
+        height: "40px",
+        backgroundColor: "#ECE7F9",
+        margin: "10px 0",
+        borderRadius: "10px",
+        display: "flex",
+        alignItems: "center",
+        padding: "5px 10px",
+      }}
+    >
+      <p
+        style={{
+          fontSize: "14px",
+          color: "#3D3D3D",
+          fontFamily: "LibreFranklin",
+          fontWeight: "600",
+        }}
+      >
+        {numSelected > 0
+          ? `${numSelected} ${numSelected === 1 ? "item" : "items"} selected`
+          : ""}
+      </p>
+    </div>
+  );
+};
+
 export default function InventoryTable() {
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("calories");
+  const [selected, setSelected] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [dense, setDense] = React.useState(false);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = rows.map((n) => n.id);
+      setSelected(newSelected);
+      return;
+    }
+    setSelected([]);
+  };
+
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+    setSelected(newSelected);
+  };
+
+  const isSelected = (id) => selected.indexOf(id) !== -1;
+
   return (
     <div>
-      <TableToolBar itemsSelected={9}/>
+      <TableToolBar numSelected={selected.length} />
       <TableContainer
         component={Paper}
-        sx={{ backgroundColor: "white" }}
-      ></TableContainer>
+        sx={{ backgroundColor: "white", borderRadius: "10px" }}
+      >
+        <Table>
+          <EnhancedTableHead
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            rowCount={rows.length}
+          />
+          <TableBody>
+            {rows.map((row, index) => {
+              const isItemSelected = isSelected(row.id);
+              const labelId = `enhanced-table-checkbox-${index}`;
+
+              return (
+                <TableRow
+                  hover
+                  onClick={(event) => handleClick(event, row.id)}
+                  role="checkbox"
+                  aria-checked={isItemSelected}
+                  tabIndex={-1}
+                  key={row.id}
+                  selected={isItemSelected}
+                  sx={{ cursor: "pointer" }}
+                >
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      color="primary"
+                      checked={isItemSelected}
+                      inputProps={{
+                        "aria-labelledby": labelId,
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell align="left">{row.itemName}</TableCell>
+                  <TableCell align="left">{row.categoryName}</TableCell>
+                  <TableCell align="left">{row.topReviewScore}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
