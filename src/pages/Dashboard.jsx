@@ -1,5 +1,6 @@
 import React from "react";
 import StatCard from "../components/StatCard";
+import InventoryCategoriesPieChart from "../components/StatsCharts/InventoryCategoriesPieChart";
 
 const monthlySalesStats = [
   { title: "Number of Orders", value: 208, percentGain: -2 },
@@ -21,6 +22,10 @@ export default function Dashboard() {
             percentGain={item.percentGain}
           />
         ))}
+      </div>
+
+      <div style={{display: 'flex', padding: '8px', gap: '8px', flexWrap: 'wrap'}}>
+        <InventoryCategoriesPieChart/>
       </div>
     </>
   );
