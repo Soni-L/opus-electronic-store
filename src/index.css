@@ -8,11 +8,12 @@
 
 @font-face {
   font-family: LibreFranklin;
-  src: url(./fonts/LibreFranklin-VariableFont_wght.ttf);
+  src: url(./assets/fonts/LibreFranklin-VariableFont_wght.ttf);
 }
 
 
 body {
+  font-family: LibreFranklin;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
