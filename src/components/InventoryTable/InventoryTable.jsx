@@ -13,6 +13,7 @@ import {
   Paper,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
+import OrdersRow from "./OrdersRow";
 
 const status = {
   open: "Open",
@@ -26,6 +27,12 @@ const tableDataResponse = {
   items: [
     {
       id: 1,
+      itemName: "Macbook 14",
+      categoryName: "Computers",
+      topReviewScore: "9",
+    },
+    {
+      id: 2,
       itemName: "Dell XPS 13",
       categoryName: "Computers",
       topReviewScore: "9",
@@ -78,13 +85,7 @@ const firstOrderheadCells = [
   },
 ];
 
-const rows = tableDataResponse.items.map((item) => {
-  return {
-    itemName: item.itemName,
-    categoryName: item.categoryName,
-    topReviewScore: item.topReviewScore,
-  };
-});
+const rows = tableDataResponse.items;
 
 function EnhancedTableHead(props) {
   const {
@@ -233,29 +234,13 @@ export default function InventoryTable() {
               const labelId = `enhanced-table-checkbox-${index}`;
 
               return (
-                <TableRow
-                  hover
-                  onClick={(event) => handleClick(event, row.id)}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
+                <OrdersRow
                   key={row.id}
-                  selected={isItemSelected}
-                  sx={{ cursor: "pointer" }}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isItemSelected}
-                      inputProps={{
-                        "aria-labelledby": labelId,
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="left">{row.itemName}</TableCell>
-                  <TableCell align="left">{row.categoryName}</TableCell>
-                  <TableCell align="left">{row.topReviewScore}</TableCell>
-                </TableRow>
+                  row={row}
+                  isItemSelected={isItemSelected}
+                  handleClick={handleClick}
+                  labelId={labelId}
+                />
               );
             })}
           </TableBody>
