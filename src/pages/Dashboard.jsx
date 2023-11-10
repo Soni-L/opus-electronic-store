@@ -1,6 +1,7 @@
 import React from "react";
 import StatCard from "../components/StatCard";
 import InventoryCategoriesPieChart from "../components/StatsCharts/InventoryCategoriesPieChart";
+import InventoryStatusChart from "../components/StatsCharts/InventoryStatusChart";
 
 const monthlySalesStats = [
   { title: "Number of Orders", value: 208, percentGain: -2 },
@@ -13,7 +14,7 @@ const monthlySalesStats = [
 export default function Dashboard() {
   return (
     <>
-      <div style={{display: 'flex', padding: '8px', gap: '8px', flexWrap: 'wrap'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px', gap: '10px', flexWrap: 'wrap'}}>
         {monthlySalesStats.map((item, index) => (
           <StatCard
             key={index}
@@ -24,7 +25,8 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <div style={{display: 'flex', padding: '8px', gap: '8px', flexWrap: 'wrap'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', padding: '20px', gap: '10px', flexWrap: 'wrap'}}>
+        <InventoryStatusChart/>
         <InventoryCategoriesPieChart/>
       </div>
     </>
