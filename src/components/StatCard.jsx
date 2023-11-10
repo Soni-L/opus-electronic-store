@@ -1,4 +1,5 @@
 import React from "react";
+import starIcon from "../assets/calendar-star.svg";
 
 export default function StatCard({ title = "Number of Orders" }) {
   return (
@@ -26,7 +27,7 @@ export default function StatCard({ title = "Number of Orders" }) {
         >
           <img
             style={{ height: "24px", width: "24px", paddingBottom: "4px" }}
-            src="src/assets/calendar-star.svg"
+            src={starIcon}
           ></img>
         </div>
         <p
