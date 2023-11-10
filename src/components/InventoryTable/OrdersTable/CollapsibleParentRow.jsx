@@ -1,20 +1,14 @@
 import React from "react";
 import {
-  Box,
   Collapse,
   IconButton,
-  Table,
-  TableBody,
-  TableSortLabel,
   Checkbox,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import NestedOrdersTable from "./NestedOrdersTable";
 
 export default function OrdersRow(props) {
   const { row, handleClick, isItemSelected, labelId } = props;
@@ -79,7 +73,7 @@ export default function OrdersRow(props) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <div>hello collapsible world!</div>
+            <NestedOrdersTable/>
           </Collapse>
         </TableCell>
       </TableRow>

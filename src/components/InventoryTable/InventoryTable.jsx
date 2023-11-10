@@ -13,7 +13,7 @@ import {
   Paper,
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
-import OrdersRow from "./OrdersRow";
+import OrdersTable from "./OrdersTable/CollapsibleParentRow";
 
 const status = {
   open: "Open",
@@ -236,7 +236,7 @@ export default function InventoryTable() {
               const labelId = `enhanced-table-checkbox-${index}`;
 
               return (
-                <OrdersRow
+                <OrdersTable
                   key={row.id}
                   row={row}
                   isItemSelected={isItemSelected}
