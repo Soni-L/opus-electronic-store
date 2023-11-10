@@ -1,6 +1,6 @@
 # Live Site Url
 
-(https://opus-electronic-store.vercel.app)
+[opus-electronic-store.vercel.app](https://opus-electronic-store.vercel.app)
 
 # React + Vite
 
