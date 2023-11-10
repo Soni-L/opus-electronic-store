@@ -1,5 +1,5 @@
 import React from "react";
-import starIcon from "../assets/calendar-star.svg";
+import starIcon from "src/assets/calendar-star.svg";
 import { ArrowDownward,  ArrowUpward} from "@mui/icons-material";
 
 export default function StatCard({
