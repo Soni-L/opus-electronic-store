@@ -327,7 +327,6 @@ const reducer = (selectTree, action) => {
         }
       })();
 
-
       const totalSelectNextState = (() => {
         if (prevOderSelected.selected == selectState.checked) {
           if (prevTotalSelected - 1 > 0) {
@@ -344,48 +343,90 @@ const reducer = (selectTree, action) => {
         }
       })();
 
+      //checking the box
       if (prevOderSelected.selected === selectState.unChecked) {
-        return {
-          ...selectTree,
-          selectAll : totalSelectNextState,
-          categories: selectTree.categories.map((category) => {
-            return {
-              ...category,
-              orderItems: category.orderItems.map((order) => {
-                if (order.orderId === action.id) {
-                  return {
-                    ...order,
-                    selected: selectState.checked,
-                  };
-                } else {
-                  return {
-                    ...order,
-                  };
-                }
-              }),
-            };
-          }),
-        };
-      } else {
         return {
           ...selectTree,
           selectAll: totalSelectNextState,
           categories: selectTree.categories.map((category) => {
-            return {
-              ...category,
-              orderItems: category.orderItems.map((order) => {
-                if (order.orderId === action.id) {
-                  return {
-                    ...order,
-                    selected: selectState.unChecked,
-                  };
-                } else {
-                  return {
-                    ...order,
-                  };
-                }
-              }),
-            };
+            if (category.id === parentCategory.id) {
+              return {
+                ...category,
+                selectAllOrders: parentNextState,
+                orderItems: category.orderItems.map((order) => {
+                  if (order.orderId === action.id) {
+                    return {
+                      ...order,
+                      selected: selectState.checked,
+                    };
+                  } else {
+                    return {
+                      ...order,
+                    };
+                  }
+                }),
+              };
+            } else {
+              return {
+                ...category,
+                orderItems: category.orderItems.map((order) => {
+                  if (order.orderId === action.id) {
+                    return {
+                      ...order,
+                      selected: selectState.checked,
+                    };
+                  } else {
+                    return {
+                      ...order,
+                    };
+                  }
+                }),
+              };
+            }
+          }),
+        };
+      }
+
+      //unchecking the box
+      else {
+        return {
+          ...selectTree,
+          selectAll: totalSelectNextState,
+          categories: selectTree.categories.map((category) => {
+            if (category.id === parentCategory.id) {
+              return {
+                ...category,
+                selectAllOrders: parentNextState,
+                orderItems: category.orderItems.map((order) => {
+                  if (order.orderId === action.id) {
+                    return {
+                      ...order,
+                      selected: selectState.unChecked,
+                    };
+                  } else {
+                    return {
+                      ...order,
+                    };
+                  }
+                }),
+              };
+            } else {
+              return {
+                ...category,
+                orderItems: category.orderItems.map((order) => {
+                  if (order.orderId === action.id) {
+                    return {
+                      ...order,
+                      selected: selectState.unChecked,
+                    };
+                  } else {
+                    return {
+                      ...order,
+                    };
+                  }
+                }),
+              };
+            }
           }),
         };
       }

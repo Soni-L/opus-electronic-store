@@ -39,6 +39,11 @@ export default function OrdersRow(props) {
           <Checkbox
             onClick={(event) => handleClick(event, row.id)}
             color="primary"
+            indeterminate={
+              shallowTreeSelect.categories.find(
+                (category) => category.id == row.id
+              )?.selectAllOrders === selectState.intederminate
+            }
             checked={
               shallowTreeSelect.categories.find(
                 (category) => category.id == row.id
@@ -47,7 +52,7 @@ export default function OrdersRow(props) {
             onChange={() =>
               shallowTreeSelectDispatch({
                 type: "CATEGORY_LEVEL_SELECT",
-                id : row.id,
+                id: row.id,
               })
             }
             inputProps={{
