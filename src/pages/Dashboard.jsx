@@ -12,11 +12,11 @@ export default function Dashboard() {
   const monthlySalesStats = useMonthlySalesStats()
 
   return (
-    <>
+    <div style={{ maxWidth: "1500px", margin: "auto" }}>
       <div
         style={{
           display: "flex",
-          justifyContent: "space-around",
+          justifyContent: "space-between",
           padding: "20px",
           gap: "10px",
           flexWrap: "wrap",
@@ -35,7 +35,7 @@ export default function Dashboard() {
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
           padding: "20px",
           gap: "10px",
           flexWrap: "wrap",
@@ -45,9 +45,9 @@ export default function Dashboard() {
         <InventoryCategoriesPieChart />
       </div>
 
-      <div style={{padding: "20px" }}>
-        <InventoryTable rows={orders.items}/>
+      <div style={{ padding: "20px" }}>
+        <InventoryTable rows={orders.items} />
       </div>
-    </>
+    </div>
   );
 }
