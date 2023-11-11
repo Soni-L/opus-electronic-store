@@ -83,8 +83,11 @@ export default function InventoryStatusChart() {
             display: "none",
           },
           ".MuiChartsAxis-tickLabel > tspan": {
-            fontSize: '11px',
-          }
+            fontSize: "11px",
+          },
+          ".MuiChartsLegend-series > text > tspan": {
+            fontSize: "12px",
+          },
         }}
       />
     </div>

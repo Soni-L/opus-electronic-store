@@ -44,6 +44,9 @@ export default function InventoryCategoriesPieChart() {
           "& .MuiChartsLegend-mark": {
             rx: "50",
           },
+          ".MuiChartsLegend-series > text > tspan": {
+            fontSize: "12px",
+          },
         }}
         series={[
           {
