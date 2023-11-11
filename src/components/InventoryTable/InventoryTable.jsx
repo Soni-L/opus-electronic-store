@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import {
   Box,
   Table,
@@ -14,57 +13,6 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import OrdersTable from "./OrdersTable/CollapsibleParentRow";
-
-const status = {
-  open: "Open",
-  done: "Done",
-  inProgress: "In Progress",
-};
-
-const tableDataResponse = {
-  total: 14,
-  pageSize: 5,
-  items: [
-    {
-      id: 1,
-      itemName: "Macbook 14",
-      categoryName: "Computers",
-      topReviewScore: "9",
-    },
-    {
-      id: 2,
-      itemName: "Dell XPS 13",
-      categoryName: "Computers",
-      topReviewScore: "9",
-      orderItems: [
-        {
-          orderId: "1234566",
-          reviewScore: 6,
-          customer: {
-            customerId: "1",
-            name: "Soni Lamkaj",
-            email: "acdsoni@gmail.com",
-            profilePicUrl: "src/assets/soni-profile.png",
-          },
-          status: status.open,
-          orderTime: moment().toISOString(),
-        },
-        {
-          orderId: "1234567",
-          reviewScore: 6,
-          customer: {
-            customerId: "1",
-            name: "Soni Lamkaj",
-            email: "acdsoni@gmail.com",
-            profilePicUrl: "src/assets/soni-profile.png",
-          },
-          status: status.done,
-          orderTime: moment().toISOString(),
-        },
-      ],
-    },
-  ],
-};
 
 const firstOrderheadCells = [
   {
@@ -86,8 +34,6 @@ const firstOrderheadCells = [
     label: "Top Review Score",
   },
 ];
-
-const rows = tableDataResponse.items;
 
 function EnhancedTableHead(props) {
   const {
@@ -170,13 +116,10 @@ const TableToolBar = ({ numSelected }) => {
   );
 };
 
-export default function InventoryTable() {
+export default function InventoryTable({rows}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";

@@ -3,16 +3,14 @@ import StatCard from "../components/StatCard";
 import InventoryCategoriesPieChart from "../components/StatsCharts/InventoryCategoriesPieChart";
 import InventoryStatusChart from "../components/StatsCharts/InventoryStatusChart";
 import InventoryTable from "../components/InventoryTable/InventoryTable";
+import useQueryOrders from "../hooks/useQueryOrders";
+import useMonthlySalesStats from "../hooks/useMonthlySalesStats";
 
-const monthlySalesStats = [
-  { title: "Number of Orders", value: 208, percentGain: -2 },
-  { title: "AVG Review Score", value: 6, percentGain: -2 },
-  { title: "Cancellations", value: 54, percentGain: 2 },
-  { title: "Done", value: 72, percentGain: 2 },
-  { title: "Customers", value: 12, percentGain: 2 },
-];
 
 export default function Dashboard() {
+  const orders = useQueryOrders()
+  const monthlySalesStats = useMonthlySalesStats()
+
   return (
     <>
       <div
@@ -48,7 +46,7 @@ export default function Dashboard() {
       </div>
 
       <div style={{padding: "20px" }}>
-        <InventoryTable />
+        <InventoryTable rows={orders.items}/>
       </div>
     </>
   );
