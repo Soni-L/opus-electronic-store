@@ -9,10 +9,16 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import NestedOrdersTable from "./NestedOrdersTable";
+import { ShallowTreeSelectContext, selectState } from "../InventoryTable";
 
 export default function OrdersRow(props) {
   const { row, handleClick, isItemSelected, labelId, onSelectAllOrdersClick } =
     props;
+
+  const { shallowTreeSelect, shallowTreeSelectDispatch } = React.useContext(
+    ShallowTreeSelectContext
+  );
+
   const [open, setOpen] = React.useState(false);
 
   const handleSelectAllOrdersFromParent = (event) => {
@@ -33,8 +39,17 @@ export default function OrdersRow(props) {
           <Checkbox
             onClick={(event) => handleClick(event, row.id)}
             color="primary"
-            checked={isItemSelected}
-            onChange={handleSelectAllOrdersFromParent}
+            checked={
+              shallowTreeSelect.categories.find(
+                (category) => category.id == row.id
+              )?.selectAllOrders === selectState.checked
+            }
+            onChange={() =>
+              shallowTreeSelectDispatch({
+                type: "CATEGORY_LEVEL_SELECT",
+                id : row.id,
+              })
+            }
             inputProps={{
               "aria-labelledby": labelId,
             }}
@@ -81,6 +96,7 @@ export default function OrdersRow(props) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <NestedOrdersTable
               rows={row.orderItems}
+              categoryId={row.id}
               onSelectAllClick={onSelectAllOrdersClick}
             />
           </Collapse>

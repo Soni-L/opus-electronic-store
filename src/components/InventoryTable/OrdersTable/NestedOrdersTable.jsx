@@ -1,8 +1,6 @@
 import React from "react";
 import {
   Box,
-  Collapse,
-  IconButton,
   Table,
   TableBody,
   TableSortLabel,
@@ -11,11 +9,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { visuallyHidden } from "@mui/utils";
+import { ShallowTreeSelectContext, selectState } from "../InventoryTable";
 
 const headCells = [
   {
@@ -51,8 +47,11 @@ const headCells = [
 ];
 
 export default function NestedOrdersTable(props) {
-  const { rows, onSelectAllClick, numSelected, rowCount, onRequestSort } =
-    props;
+  const { rows, categoryId, onSelectAllClick, onRequestSort } = props;
+
+  const { shallowTreeSelect, shallowTreeSelectDispatch } = React.useContext(
+    ShallowTreeSelectContext
+  );
 
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -61,8 +60,6 @@ export default function NestedOrdersTable(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
-  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -82,8 +79,8 @@ export default function NestedOrdersTable(props) {
     }
     setSelected(newSelected);
 
-    if(newSelected?.length === rows.length) {
-      onSelectAllClick()
+    if (newSelected?.length === rows.length) {
+      onSelectAllClick();
     }
   };
 
@@ -96,13 +93,12 @@ export default function NestedOrdersTable(props) {
       >
         <TableHead>
           <TableRow>
-            <TableCell padding="checkbox" sx={{visibility: 'hidden'}}>
+            <TableCell padding="checkbox" sx={{ visibility: "hidden" }}>
               <Checkbox
-               
                 color="primary"
                 checked={false}
                 inputProps={{
-                  "aria-labelledby": 'labelId',
+                  "aria-labelledby": "labelId",
                 }}
               />
             </TableCell>
@@ -134,9 +130,15 @@ export default function NestedOrdersTable(props) {
 
         <TableBody>
           {rows.map((row, index) => {
-            const isItemSelected = isSelected(row.orderId);
-            const labelId = `enhanced-table-checkbox-${index}`;
+            const isItemSelected =
+              shallowTreeSelect.categories
+                .find((category) => category.id === categoryId)
+                ?.orderItems.find(
+                  (orderItem) => orderItem.orderId === row.orderId
+                )?.selected === selectState.checked;
 
+            const labelId = `enhanced-table-checkbox-${index}`;
+       
             return (
               <TableRow
                 hover

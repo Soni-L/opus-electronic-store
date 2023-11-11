@@ -15,7 +15,7 @@ import { visuallyHidden } from "@mui/utils";
 import OrdersTable from "./OrdersTable/CollapsibleParentRow";
 
 export const ShallowTreeSelectContext = createContext();
-const selectState = {
+export const selectState = {
   checked: "checked",
   intederminate: "intederminate",
   unChecked: "unChecked",
@@ -133,6 +133,30 @@ const TableToolBar = ({ numSelected }) => {
 };
 
 const reducer = (selectTree, action) => {
+  const totalOrdersPrevSelected = () => {
+    let total = 0;
+    selectTree.categories.forEach((category) =>
+      category.orderItems.forEach((item) => {
+        if (item.selected === selectState.checked) {
+          total++;
+        }
+      })
+    );
+    return total;
+  };
+
+  const totalOrdersInCategoryPrevSelected = (id) => {
+    let total = 0;
+    selectTree.categories
+      .find((category) => category.id === id)
+      ?.orderItems?.forEach((item) => {
+        if (item.selected === selectState.checked) {
+          total++;
+        }
+      });
+    return total;
+  };
+
   switch (action.type) {
     case "TOP_LEVEL_SELECT":
       if (
@@ -167,6 +191,70 @@ const reducer = (selectTree, action) => {
           }),
         };
       }
+
+    // case "CATEGORY_LEVEL_SELECT":
+    //   let prevSelectedTotals = totalOrdersPrevSelected();
+    //   let prevSelectedCategory = selectTree.categories.find(
+    //     (category) => category.id === action.id
+    //   );
+
+    //   let prevSelectedCategoryCheck = prevSelectedCategory.selectAllOrders;
+    //   let onePrevSelected = prevSelectedTotals === 1;
+    //   let nearAllPrevSelected = selectTree.totalOrders - 1 === prevSelectedTotals ? true : false;
+
+    //   if (prevSelectedCategoryCheck === selectState.checked) {
+    //     return {
+    //       ...selectTree,
+    //       selectAll: onePrevSelected
+    //         ? selectState.unChecked
+    //         : selectState.intederminate,
+    //       categories: selectTree.categories.map((category) => {
+    //         if (category.id === action.id) {
+    //           return {
+    //             ...category,
+    //             selectAllOrders: prevSelectedCategoryCheck === selectState.checked ? selectState.unChecked : selectState.checked,
+    //             orderItems: category.orderItems.map((order) => {
+    //               return { ...order, selected: selectState.checked };
+    //             }),
+    //           };
+    //         }
+    //         return {
+    //           ...category,
+    //           orderItems: category.orderItems.map((order) => {
+    //             return { ...order, selected: selectState.unChecked };
+    //           }),
+    //         };
+    //       }),
+    //     };
+    //   } else {
+    //     return {
+    //       ...selectTree,
+    //       selectAll: nearAllPrevSelected
+    //         ? selectState.checked
+    //         : selectState.intederminate,
+    //       categories: selectTree.categories.map((category) => {
+    //         if (category.id === action.id) {
+    //           return {
+    //             ...category,
+    //             selectAllOrders:
+    //               prevSelectedCategoryCheck === selectState.checked
+    //                 ? selectState.unChecked
+    //                 : selectState.checked,
+    //             orderItems: category.orderItems.map((order) => {
+    //               return { ...order, selected: selectState.checked };
+    //             }),
+    //           };
+    //         }
+    //         return {
+    //           ...category,
+    //           orderItems: category.orderItems.map((order) => {
+    //             return { ...order, selected: selectState.checked };
+    //           }),
+    //         };
+    //       }),
+    //     };
+    //   }
+
     default:
       return selectTree;
   }
@@ -175,6 +263,7 @@ const reducer = (selectTree, action) => {
 export default function InventoryTable({ rows }) {
   const [shallowTreeSelect, shallowTreeSelectDispatch] = useReducer(reducer, {
     selectAll: selectState.unChecked,
+    totalOrders: 3,
     categories: rows.map((row) => {
       return {
         ...row,
