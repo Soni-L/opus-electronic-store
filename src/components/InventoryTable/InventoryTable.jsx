@@ -347,6 +347,7 @@ const reducer = (selectTree, action) => {
       if (prevOderSelected.selected === selectState.unChecked) {
         return {
           ...selectTree,
+          selectAll : totalSelectNextState,
           categories: selectTree.categories.map((category) => {
             return {
               ...category,
@@ -368,6 +369,7 @@ const reducer = (selectTree, action) => {
       } else {
         return {
           ...selectTree,
+          selectAll: totalSelectNextState,
           categories: selectTree.categories.map((category) => {
             return {
               ...category,
@@ -422,7 +424,7 @@ export default function InventoryTable({ rows }) {
     );
 
     setNumSelected(total);
-  }, [shallowTreeSelect.selectAll]);
+  }, [shallowTreeSelect.selectAll, shallowTreeSelect.categories]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
