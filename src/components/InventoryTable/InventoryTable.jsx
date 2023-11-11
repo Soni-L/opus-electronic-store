@@ -192,68 +192,65 @@ const reducer = (selectTree, action) => {
         };
       }
 
-    // case "CATEGORY_LEVEL_SELECT":
-    //   let prevSelectedTotals = totalOrdersPrevSelected();
-    //   let prevSelectedCategory = selectTree.categories.find(
-    //     (category) => category.id === action.id
-    //   );
+    case "CATEGORY_LEVEL_SELECT":
+      const prevSelectState = selectTree.categories.find(
+        (category) => category.id === action.id
+      )?.selectAllOrders;
 
-    //   let prevSelectedCategoryCheck = prevSelectedCategory.selectAllOrders;
-    //   let onePrevSelected = prevSelectedTotals === 1;
-    //   let nearAllPrevSelected = selectTree.totalOrders - 1 === prevSelectedTotals ? true : false;
-
-    //   if (prevSelectedCategoryCheck === selectState.checked) {
-    //     return {
-    //       ...selectTree,
-    //       selectAll: onePrevSelected
-    //         ? selectState.unChecked
-    //         : selectState.intederminate,
-    //       categories: selectTree.categories.map((category) => {
-    //         if (category.id === action.id) {
-    //           return {
-    //             ...category,
-    //             selectAllOrders: prevSelectedCategoryCheck === selectState.checked ? selectState.unChecked : selectState.checked,
-    //             orderItems: category.orderItems.map((order) => {
-    //               return { ...order, selected: selectState.checked };
-    //             }),
-    //           };
-    //         }
-    //         return {
-    //           ...category,
-    //           orderItems: category.orderItems.map((order) => {
-    //             return { ...order, selected: selectState.unChecked };
-    //           }),
-    //         };
-    //       }),
-    //     };
-    //   } else {
-    //     return {
-    //       ...selectTree,
-    //       selectAll: nearAllPrevSelected
-    //         ? selectState.checked
-    //         : selectState.intederminate,
-    //       categories: selectTree.categories.map((category) => {
-    //         if (category.id === action.id) {
-    //           return {
-    //             ...category,
-    //             selectAllOrders:
-    //               prevSelectedCategoryCheck === selectState.checked
-    //                 ? selectState.unChecked
-    //                 : selectState.checked,
-    //             orderItems: category.orderItems.map((order) => {
-    //               return { ...order, selected: selectState.checked };
-    //             }),
-    //           };
-    //         }
-    //         return {
-    //           ...category,
-    //           orderItems: category.orderItems.map((order) => {
-    //             return { ...order, selected: selectState.checked };
-    //           }),
-    //         };
-    //       }),
-    //     };
-    //   }
+      if (
+        prevSelectState === selectState.unChecked ||
+        prevSelectState === selectState.intederminate
+      ) {
+        return {
+          ...selectTree,
+          categories: selectTree.categories.map((category) => {
+            if (category.id === action.id) {
+              return {
+                ...category,
+                selectAllOrders: selectState.checked,
+                orderItems: category.orderItems.map((order) => {
+                  return {
+                    ...order,
+                    selected: selectState.checked,
+                  };
+                }),
+              };
+            } else {
+              return {
+                ...category,
+                orderItems: category.orderItems.map((order) => {
+                  return { ...order, };
+                }),
+              };
+            }
+          }),
+        };
+      } else {
+        return {
+          ...selectTree,
+          categories: selectTree.categories.map((category) => {
+            if (category.id === action.id) {
+              return {
+                ...category,
+                selectAllOrders: selectState.unChecked,
+                orderItems: category.orderItems.map((order) => {
+                  return {
+                    ...order,
+                    selected: selectState.unChecked,
+                  };
+                }),
+              };
+            } else {
+              return {
+                ...category,
+                orderItems: category.orderItems.map((order) => {
+                  return { ...order};
+                }),
+              };
+            }
+          }),
+        };
+      }
 
     default:
       return selectTree;
