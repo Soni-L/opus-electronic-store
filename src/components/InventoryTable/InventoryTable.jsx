@@ -193,9 +193,41 @@ const reducer = (selectTree, action) => {
       }
 
     case "CATEGORY_LEVEL_SELECT":
-      const prevSelectState = selectTree.categories.find(
+      const prevCategoryState = selectTree.categories.find(
         (category) => category.id === action.id
-      )?.selectAllOrders;
+      );
+      const prevSelectState = prevCategoryState?.selectAllOrders;
+      const prevTotal = totalOrdersPrevSelected();
+
+      const selectAllNextState = (() => {
+        if (prevSelectState === selectState.checked) {
+          if (
+            prevTotal -
+              [...prevCategoryState.orderItems].filter(
+                (category) => category.id !== action.id
+              )?.length ===
+            0
+          ) {
+            return selectState.unChecked;
+          } else {
+            return selectState.intederminate;
+          }
+        } else {
+          if (
+            prevTotal +
+              [...prevCategoryState.orderItems].filter(
+                (category) => category.id !== action.id
+              )?.length ===
+            selectTree.totalOrders
+          ) {
+            return selectState.checked;
+          } else {
+            return selectState.intederminate;
+          }
+        }
+      })();
+
+      console.log(selectAllNextState);
 
       if (
         prevSelectState === selectState.unChecked ||
@@ -203,6 +235,7 @@ const reducer = (selectTree, action) => {
       ) {
         return {
           ...selectTree,
+          selectAll: selectAllNextState,
           categories: selectTree.categories.map((category) => {
             if (category.id === action.id) {
               return {
@@ -228,6 +261,7 @@ const reducer = (selectTree, action) => {
       } else {
         return {
           ...selectTree,
+          selectAll: selectAllNextState,
           categories: selectTree.categories.map((category) => {
             if (category.id === action.id) {
               return {
@@ -263,7 +297,6 @@ const reducer = (selectTree, action) => {
         }
       });
 
-
       if (prevOderSelected.selected === selectState.unChecked) {
         return {
           ...selectTree,
@@ -274,7 +307,7 @@ const reducer = (selectTree, action) => {
                 if (order.orderId === action.id) {
                   return {
                     ...order,
-                    selected : selectState.checked
+                    selected: selectState.checked,
                   };
                 } else {
                   return {
@@ -327,11 +360,22 @@ export default function InventoryTable({ rows }) {
     }),
   });
 
-  console.log(shallowTreeSelect);
-
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
+  const [numSelected, setNumSelected] = React.useState(0);
+
+  React.useEffect(() => {
+    let total = 0;
+    shallowTreeSelect.categories.forEach((category) =>
+      category?.orderItems?.forEach((item) => {
+        if (item.selected === selectState.checked) {
+          total++;
+        }
+      })
+    );
+
+    setNumSelected(total);
+  }, [shallowTreeSelect.selectAll]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -339,64 +383,30 @@ export default function InventoryTable({ rows }) {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
   return (
     <ShallowTreeSelectContext.Provider
       value={{ shallowTreeSelect, shallowTreeSelectDispatch }}
     >
-      <TableToolBar numSelected={selected.length} />
+      <TableToolBar numSelected={numSelected} />
       <TableContainer
         component={Paper}
         sx={{ backgroundColor: "white", borderRadius: "10px" }}
       >
         <Table>
           <EnhancedTableHead
-            numSelected={selected.length}
+            numSelected={numSelected}
             order={order}
             orderBy={orderBy}
-            onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
             rowCount={rows.length}
           />
           <TableBody>
             {rows.map((row, index) => {
-              const isItemSelected = selected.indexOf(row.id) !== -1;
               const labelId = `enhanced-table-checkbox-${index}`;
-
               return (
                 <OrdersTable
                   key={row.id}
                   row={row}
-                  isItemSelected={isItemSelected}
-                  onSelectAllOrdersClick={(e) => handleClick(e, row.id)}
-                  handleClick={handleClick}
                   labelId={labelId}
                 />
               );
