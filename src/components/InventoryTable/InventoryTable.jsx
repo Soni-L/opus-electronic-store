@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useReducer } from "react";
 import {
   Box,
   Table,
@@ -13,6 +13,13 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 import OrdersTable from "./OrdersTable/CollapsibleParentRow";
+
+export const ShallowTreeSelectContext = createContext();
+const selectState = {
+  checked: "checked",
+  intederminate: "intederminate",
+  unChecked: "unChecked",
+};
 
 const firstOrderheadCells = [
   {
@@ -44,6 +51,11 @@ function EnhancedTableHead(props) {
     rowCount,
     onRequestSort,
   } = props;
+
+  const { shallowTreeSelect, shallowTreeSelectDispatch } = React.useContext(
+    ShallowTreeSelectContext
+  );
+
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -54,9 +66,13 @@ function EnhancedTableHead(props) {
         <TableCell padding="checkbox">
           <Checkbox
             color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
+            indeterminate={
+              shallowTreeSelect.selectAll === selectState.intederminate
+            }
+            checked={shallowTreeSelect.selectAll === selectState.checked}
+            onChange={() =>
+              shallowTreeSelectDispatch({ type: "TOP_LEVEL_SELECT" })
+            }
             inputProps={{
               "aria-label": "select all desserts",
             }}
@@ -116,7 +132,62 @@ const TableToolBar = ({ numSelected }) => {
   );
 };
 
-export default function InventoryTable({rows}) {
+const reducer = (selectTree, action) => {
+  switch (action.type) {
+    case "TOP_LEVEL_SELECT":
+      if (
+        selectTree.selectAll === selectState.unChecked ||
+        selectTree.selectAll === selectState.intederminate
+      ) {
+        return {
+          ...selectTree,
+          selectAll: selectState.checked,
+          categories: selectTree.categories.map((row) => {
+            return {
+              ...row,
+              selectAllOrders: selectState.checked,
+              orderItems: row.orderItems.map((order) => {
+                return { ...order, selected: selectState.checked };
+              }),
+            };
+          }),
+        };
+      } else {
+        return {
+          ...selectTree,
+          selectAll: selectState.unChecked,
+          categories: selectTree.categories.map((row) => {
+            return {
+              ...row,
+              selectAllOrders: selectState.unChecked,
+              orderItems: row.orderItems.map((order) => {
+                return { ...order, selected: selectState.unChecked };
+              }),
+            };
+          }),
+        };
+      }
+    default:
+      return selectTree;
+  }
+};
+
+export default function InventoryTable({ rows }) {
+  const [shallowTreeSelect, shallowTreeSelectDispatch] = useReducer(reducer, {
+    selectAll: selectState.unChecked,
+    categories: rows.map((row) => {
+      return {
+        ...row,
+        selectAllOrders: selectState.unChecked,
+        orderItems: row.orderItems.map((order) => {
+          return { ...order, selected: selectState.unChecked };
+        }),
+      };
+    }),
+  });
+
+  console.log(shallowTreeSelect);
+
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -156,7 +227,9 @@ export default function InventoryTable({rows}) {
   };
 
   return (
-    <div>
+    <ShallowTreeSelectContext.Provider
+      value={{ shallowTreeSelect, shallowTreeSelectDispatch }}
+    >
       <TableToolBar numSelected={selected.length} />
       <TableContainer
         component={Paper}
@@ -190,6 +263,6 @@ export default function InventoryTable({rows}) {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </ShallowTreeSelectContext.Provider>
   );
 }

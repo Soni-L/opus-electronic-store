@@ -15,6 +15,20 @@ const tableDataResponse = {
       itemName: "Macbook 14",
       categoryName: "Computers",
       topReviewScore: "9",
+      orderItems: [
+        {
+          orderId: "1234557",
+          reviewScore: 9,
+          customer: {
+            customerId: "1",
+            name: "Soni Lamkaj",
+            email: "acdsoni@gmail.com",
+            profilePicUrl: "src/assets/soni-profile.png",
+          },
+          status: status.done,
+          orderTime: moment().toISOString(),
+        },
+      ],
     },
     {
       id: 2,
