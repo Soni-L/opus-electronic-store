@@ -50,7 +50,12 @@ export default function InventoryCategoriesPieChart() {
         }}
         series={[
           {
-            data: cagetories.data,
+            data: cagetories.data.map((category) => {
+              return {
+                label: `${category.label} (${category.value})`,
+                value: category.value,
+              };
+            }),
             arcLabel: (item) => `${Math.floor((item.value / 96) * 100)}%`,
             innerRadius: 40,
             outerRadius: 97,

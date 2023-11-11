@@ -11,8 +11,13 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import NestedOrdersTable from "./NestedOrdersTable";
 
 export default function OrdersRow(props) {
-  const { row, handleClick, isItemSelected, labelId } = props;
+  const { row, handleClick, isItemSelected, labelId, onSelectAllOrdersClick } =
+    props;
   const [open, setOpen] = React.useState(false);
+
+  const handleSelectAllOrdersFromParent = (event) => {
+    onSelectAllOrdersClick();
+  };
 
   return (
     <>
@@ -29,6 +34,7 @@ export default function OrdersRow(props) {
             onClick={(event) => handleClick(event, row.id)}
             color="primary"
             checked={isItemSelected}
+            onChange={handleSelectAllOrdersFromParent}
             inputProps={{
               "aria-labelledby": labelId,
             }}
@@ -73,7 +79,10 @@ export default function OrdersRow(props) {
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <NestedOrdersTable rows={row.orderItems} />
+            <NestedOrdersTable
+              rows={row.orderItems}
+              onSelectAllClick={onSelectAllOrdersClick}
+            />
           </Collapse>
         </TableCell>
       </TableRow>

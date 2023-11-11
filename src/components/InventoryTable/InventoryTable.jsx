@@ -212,8 +212,6 @@ export default function InventoryTable() {
     setSelected(newSelected);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
-
   return (
     <div>
       <TableToolBar numSelected={selected.length} />
@@ -232,7 +230,7 @@ export default function InventoryTable() {
           />
           <TableBody>
             {rows.map((row, index) => {
-              const isItemSelected = isSelected(row.id);
+              const isItemSelected = selected.indexOf(row.id) !== -1;
               const labelId = `enhanced-table-checkbox-${index}`;
 
               return (
@@ -240,6 +238,7 @@ export default function InventoryTable() {
                   key={row.id}
                   row={row}
                   isItemSelected={isItemSelected}
+                  onSelectAllOrdersClick={(e) => handleClick(e, row.id)}
                   handleClick={handleClick}
                   labelId={labelId}
                 />

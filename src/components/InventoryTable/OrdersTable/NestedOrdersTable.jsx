@@ -81,6 +81,10 @@ export default function NestedOrdersTable(props) {
       );
     }
     setSelected(newSelected);
+
+    if(newSelected?.length === rows.length) {
+      onSelectAllClick()
+    }
   };
 
   return (
@@ -130,17 +134,17 @@ export default function NestedOrdersTable(props) {
 
         <TableBody>
           {rows.map((row, index) => {
-            const isItemSelected = isSelected(row.id);
+            const isItemSelected = isSelected(row.orderId);
             const labelId = `enhanced-table-checkbox-${index}`;
 
             return (
               <TableRow
                 hover
-                onClick={(event) => handleClick(event, row.id)}
+                onClick={(event) => handleClick(event, row.orderId)}
                 role="checkbox"
                 aria-checked={isItemSelected}
                 tabIndex={-1}
-                key={row.id}
+                key={row.orderId}
                 selected={isItemSelected}
                 sx={{ cursor: "pointer" }}
               >
