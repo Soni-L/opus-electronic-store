@@ -219,7 +219,7 @@ const reducer = (selectTree, action) => {
               return {
                 ...category,
                 orderItems: category.orderItems.map((order) => {
-                  return { ...order, };
+                  return { ...order };
                 }),
               };
             }
@@ -244,7 +244,7 @@ const reducer = (selectTree, action) => {
               return {
                 ...category,
                 orderItems: category.orderItems.map((order) => {
-                  return { ...order};
+                  return { ...order };
                 }),
               };
             }
@@ -252,6 +252,61 @@ const reducer = (selectTree, action) => {
         };
       }
 
+    case "BOTTOM_LEVEL_SELECT":
+      let prevOderSelected = {};
+      selectTree.categories.forEach((category) => {
+        const found = category.orderItems.find(
+          (order) => order.orderId == action.id
+        );
+        if (found) {
+          prevOderSelected = { ...found };
+        }
+      });
+
+
+      if (prevOderSelected.selected === selectState.unChecked) {
+        return {
+          ...selectTree,
+          categories: selectTree.categories.map((category) => {
+            return {
+              ...category,
+              orderItems: category.orderItems.map((order) => {
+                if (order.orderId === action.id) {
+                  return {
+                    ...order,
+                    selected : selectState.checked
+                  };
+                } else {
+                  return {
+                    ...order,
+                  };
+                }
+              }),
+            };
+          }),
+        };
+      } else {
+        return {
+          ...selectTree,
+          categories: selectTree.categories.map((category) => {
+            return {
+              ...category,
+              orderItems: category.orderItems.map((order) => {
+                if (order.orderId === action.id) {
+                  return {
+                    ...order,
+                    selected: selectState.unChecked,
+                  };
+                } else {
+                  return {
+                    ...order,
+                  };
+                }
+              }),
+            };
+          }),
+        };
+      }
     default:
       return selectTree;
   }

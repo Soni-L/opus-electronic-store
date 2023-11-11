@@ -154,6 +154,12 @@ export default function NestedOrdersTable(props) {
                   <Checkbox
                     color="primary"
                     checked={isItemSelected}
+                    onChange={() =>
+                      shallowTreeSelectDispatch({
+                        type: "BOTTOM_LEVEL_SELECT",
+                        id: row.orderId,
+                      })
+                    }
                     inputProps={{
                       "aria-labelledby": labelId,
                     }}
