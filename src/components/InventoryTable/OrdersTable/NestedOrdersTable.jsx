@@ -61,29 +61,6 @@ export default function NestedOrdersTable(props) {
     onRequestSort(event, property);
   };
 
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-
-    if (newSelected?.length === rows.length) {
-      onSelectAllClick();
-    }
-  };
-
   return (
     <TableContainer>
       <Table
@@ -142,7 +119,6 @@ export default function NestedOrdersTable(props) {
             return (
               <TableRow
                 hover
-                onClick={(event) => handleClick(event, row.orderId)}
                 role="checkbox"
                 aria-checked={isItemSelected}
                 tabIndex={-1}

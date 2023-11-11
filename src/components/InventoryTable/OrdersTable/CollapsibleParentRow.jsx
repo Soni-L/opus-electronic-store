@@ -12,7 +12,7 @@ import NestedOrdersTable from "./NestedOrdersTable";
 import { ShallowTreeSelectContext, selectState } from "../InventoryTable";
 
 export default function OrdersRow(props) {
-  const { row, handleClick, isItemSelected, labelId, onSelectAllOrdersClick } =
+  const { row, isItemSelected, labelId, onSelectAllOrdersClick } =
     props;
 
   const { shallowTreeSelect, shallowTreeSelectDispatch } = React.useContext(
@@ -21,9 +21,6 @@ export default function OrdersRow(props) {
 
   const [open, setOpen] = React.useState(false);
 
-  const handleSelectAllOrdersFromParent = (event) => {
-    onSelectAllOrdersClick();
-  };
 
   return (
     <>
@@ -37,7 +34,6 @@ export default function OrdersRow(props) {
       >
         <TableCell padding="checkbox">
           <Checkbox
-            onClick={(event) => handleClick(event, row.id)}
             color="primary"
             indeterminate={
               shallowTreeSelect.categories.find(
