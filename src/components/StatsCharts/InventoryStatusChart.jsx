@@ -31,9 +31,10 @@ export default function InventoryStatusChart() {
       </h1>
 
       <LineChart
-        height={240}
-        width={500}
-        xAxis={[{ scaleType: "point", data: xLabels}]}
+        height={250}
+        width={550}
+        margin={{ bottom: 75, left: 80, top: 25, right: 30 }}
+        xAxis={[{ scaleType: "point", data: xLabels }]}
         yAxis={[{ min: 0 }]}
         series={[
           {
@@ -81,6 +82,9 @@ export default function InventoryStatusChart() {
           ".MuiChartsAxis-tick": {
             display: "none",
           },
+          ".MuiChartsAxis-tickLabel > tspan": {
+            fontSize: '11px',
+          }
         }}
       />
     </div>
