@@ -133,6 +133,7 @@ const TableToolBar = ({ numSelected }) => {
 };
 
 const reducer = (selectTree, action) => {
+  console.log(selectTree);
   const totalOrdersPrevSelected = () => {
     let total = 0;
     selectTree.categories.forEach((category) =>
@@ -227,8 +228,6 @@ const reducer = (selectTree, action) => {
         }
       })();
 
-      console.log(selectAllNextState);
-
       if (
         prevSelectState === selectState.unChecked ||
         prevSelectState === selectState.intederminate
@@ -296,6 +295,54 @@ const reducer = (selectTree, action) => {
           prevOderSelected = { ...found };
         }
       });
+
+      let parentCategory = {};
+      selectTree.categories.forEach((category) => {
+        category.orderItems.forEach((order) => {
+          if (order.orderId === action.id) {
+            parentCategory = category;
+          }
+        });
+      });
+      const prevTotalSelected = totalOrdersPrevSelected();
+      const totalElements = selectTree.totalOrders;
+      const prevTotalInCategorySelect = totalOrdersInCategoryPrevSelected(
+        parentCategory.id
+      );
+      const totalElementsInCategory = parentCategory?.orderItems?.length;
+
+      const parentNextState = (() => {
+        if (prevOderSelected.selected == selectState.checked) {
+          if (prevTotalInCategorySelect - 1 > 0) {
+            return selectState.intederminate;
+          } else {
+            return selectState.unChecked;
+          }
+        } else {
+          if (prevTotalInCategorySelect + 1 == totalElementsInCategory) {
+            return selectState.checked;
+          } else {
+            return selectState.intederminate;
+          }
+        }
+      })();
+
+
+      const totalSelectNextState = (() => {
+        if (prevOderSelected.selected == selectState.checked) {
+          if (prevTotalSelected - 1 > 0) {
+            return selectState.intederminate;
+          } else {
+            return selectState.unChecked;
+          }
+        } else {
+          if (prevTotalSelected + 1 == totalElements) {
+            return selectState.checked;
+          } else {
+            return selectState.intederminate;
+          }
+        }
+      })();
 
       if (prevOderSelected.selected === selectState.unChecked) {
         return {
@@ -403,13 +450,7 @@ export default function InventoryTable({ rows }) {
           <TableBody>
             {rows.map((row, index) => {
               const labelId = `enhanced-table-checkbox-${index}`;
-              return (
-                <OrdersTable
-                  key={row.id}
-                  row={row}
-                  labelId={labelId}
-                />
-              );
+              return <OrdersTable key={row.id} row={row} labelId={labelId} />;
             })}
           </TableBody>
         </Table>
